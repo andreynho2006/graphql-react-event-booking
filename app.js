@@ -75,21 +75,27 @@ app.use(
           title: args.eventInput.title,
           description: args.eventInput.description,
           price: +args.eventInput.price,
-          date: new Date(args.eventInput.date)
+          date: new Date(args.eventInput.date),
+          creator: '5e6892acf92316c5bc8ae954'
         });
-        // const event = {
-        //   _id: Math.random().toString(),
-        //   title: args.eventInput.title,
-        //   description: args.eventInput.description,
-        //   price: +args.eventInput.price,
-        //   date: args.eventInput.date
-        // };
-        //events.push(event);
+        let createdEvent;
         return event
           .save()
           .then(result => {
+            createdEvent = { ...result._doc, _id: result._doc._id.toString() };
+            return User.findById('5e6892acf92316c5bc8ae954');
             console.log(result);
             return { ...result._doc };
+          })
+          .then(user => {
+            if (!user) {
+              throw new Error('User not found');
+            }
+            user.createdEvents.push(event);
+            return user.save();
+          })
+          .then(result => {
+            return createdEvent;
           })
           .catch(err => {
             console.log(err);
