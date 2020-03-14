@@ -44,7 +44,7 @@ const transformEvent = event => {
   };
 };
 
-const transformBooking = booking => {
+const transformBooking = async booking => {
   return {
     ...booking._doc,
     _id: booking.id,
