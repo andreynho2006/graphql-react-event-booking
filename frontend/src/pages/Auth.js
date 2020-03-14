@@ -4,7 +4,7 @@ import './Auth.css';
 
 class AuthPage extends Component {
   state = {
-    isLogin: true
+    isLogin: false
   };
 
   static contextType = AuthContext;

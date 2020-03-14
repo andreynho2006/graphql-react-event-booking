@@ -45,7 +45,7 @@ class App extends React.Component {
             <MainNavigation />
             <main className='main-content'>
               <Switch>
-                {this.state.token && <Redirect from='/' to='/aevents' exact />}
+                {this.state.token && <Redirect from='/' to='/events' exact />}
                 {this.state.token && (
                   <Redirect from='/auth' to='/events' exact />
                 )}

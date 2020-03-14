@@ -1,11 +1,12 @@
 const Event = require('../../models/event');
 const User = require('../../models/user');
+
 const { transformEvent } = require('./merge');
 
 module.exports = {
   events: async () => {
-    const events = await Event.find();
     try {
+      const events = await Event.find();
       return events.map(event => {
         return transformEvent(event);
       });
@@ -27,12 +28,11 @@ module.exports = {
     let createdEvent;
     try {
       const result = await event.save();
-
-      createdEvent = await transformEvent(result);
-      const creator = await User.findById('5e68ca2f7670faccfe9a59c8');
+      createdEvent = transformEvent(result);
+      const creator = await User.findById(req.userId);
 
       if (!creator) {
-        throw new Error('User not found');
+        throw new Error('User not found.');
       }
       creator.createdEvents.push(event);
       await creator.save();
@@ -40,16 +40,6 @@ module.exports = {
       return createdEvent;
     } catch (err) {
       console.log(err);
-      throw err;
-    }
-  },
-  users: async () => {
-    const users = await User.find();
-    try {
-      return users.map(user => {
-        return { ...user._doc, password: null };
-      });
-    } catch (err) {
       throw err;
     }
   }
