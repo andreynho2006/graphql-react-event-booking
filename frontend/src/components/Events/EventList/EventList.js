@@ -10,7 +10,10 @@ const eventList = props => {
         key={event._id}
         eventId={event._id}
         title={event.title}
+        price={event.price}
+        date={event.date}
         creatorId={event.creator._id}
+        onDetail={props.onViewDetail}
       />
     );
   });
