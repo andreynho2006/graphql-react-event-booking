@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import AuthContext from '../context/auth-context';
+
 import './Auth.css';
+import AuthContext from '../context/auth-context';
 
 class AuthPage extends Component {
   state = {
-    isLogin: false
+    isLogin: true
   };
 
   static contextType = AuthContext;
@@ -14,42 +15,52 @@ class AuthPage extends Component {
     this.emailEl = React.createRef();
     this.passwordEl = React.createRef();
   }
+
   switchModeHandler = () => {
     this.setState(prevState => {
       return { isLogin: !prevState.isLogin };
     });
   };
+
   submitHandler = event => {
     event.preventDefault();
     const email = this.emailEl.current.value;
     const password = this.passwordEl.current.value;
-    // verify if there is an email and a password
-    if (email.trim().length === 0 || password.trim().lenght === 0) {
+
+    if (email.trim().length === 0 || password.trim().length === 0) {
       return;
     }
 
     let requestBody = {
       query: `
-            query {
-                login(email: "${email}", password:"${password}") {
-                    userId
-                    token
-                    tokenExpiration
-                }
-            }
-        `
+        query Login($email: String!, $password: String!) {
+          login(email: $email, password: $password) {
+            userId
+            token
+            tokenExpiration
+          }
+        }
+      `,
+      variables: {
+        email: email,
+        password: password
+      }
     };
 
     if (!this.state.isLogin) {
       requestBody = {
         query: `
-                  mutation {
-                      createUser(userInput: {email: "${email}", password:"${password}" }) {
-                          _id
-                          email
-                      }
-                  }
-              `
+          mutation CreateUser($email: String!, $password: String!) {
+            createUser(userInput: {email: $email, password: $password}) {
+              _id
+              email
+            }
+          }
+        `,
+        variables: {
+          email: email,
+          password: password
+        }
       };
     }
 
@@ -62,7 +73,7 @@ class AuthPage extends Component {
     })
       .then(res => {
         if (res.status !== 200 && res.status !== 201) {
-          throw new Error('Failed');
+          throw new Error('Failed!');
         }
         return res.json();
       })
@@ -74,7 +85,6 @@ class AuthPage extends Component {
             resData.data.login.tokenExpiration
           );
         }
-        console.log('No data');
       })
       .catch(err => {
         console.log(err);
@@ -85,14 +95,13 @@ class AuthPage extends Component {
     return (
       <form className='auth-form' onSubmit={this.submitHandler}>
         <div className='form-control'>
-          <label htmlFor='email'>Email</label>
+          <label htmlFor='email'>E-Mail</label>
           <input type='email' id='email' ref={this.emailEl} />
         </div>
         <div className='form-control'>
           <label htmlFor='password'>Password</label>
           <input type='password' id='password' ref={this.passwordEl} />
         </div>
-
         <div className='form-actions'>
           <button type='submit'>Submit</button>
           <button type='button' onClick={this.switchModeHandler}>
