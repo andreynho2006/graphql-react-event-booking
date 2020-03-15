@@ -20,9 +20,9 @@ body {
 
 .form-actions button,
 .btn {
-  background: #5101d1;
+  background: #20c39d;
   font: inherit;
-  border: 1px solid #5101d1;
+  border: 1px solid #20c39d;
   border-radius: 3px;
   padding: 0.25rem 1rem;
   margin-right: 1rem;
@@ -35,6 +35,6 @@ body {
 .form-actions button:active,
 .btn:hover,
 .btn:active {
-  background: #6219d6;
-  border-color: #6219d6;
+  background: #20c300;
+  border-color: #20c300;
 }
