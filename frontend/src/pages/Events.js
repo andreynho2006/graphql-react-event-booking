@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 
 import Modal from '../components/Modal/Modal';
 import Backdrop from '../components/Backdrop/Backdrop';
-import AuthContext from '../context/auth-context';
 import EventList from '../components/Events/EventList/EventList';
 import Spinner from '../components/Spinner/Spinner';
+import AuthContext from '../context/auth-context';
 import './Events.css';
 
 class EventsPage extends Component {
@@ -14,7 +14,6 @@ class EventsPage extends Component {
     isLoading: false,
     selectedEvent: null
   };
-
   isActive = true;
 
   static contextType = AuthContext;
@@ -56,8 +55,8 @@ class EventsPage extends Component {
 
     const requestBody = {
       query: `
-          mutation CreateEvent($title: String!, $description: String!, $price: Float!, $date: String!)  {
-            createEvent(eventInput: {title: $title, description: $description, price: $price, date: $date}) {
+          mutation CreateEvent($title: String!, $desc: String!, $price: Float!, $date: String!) {
+            createEvent(eventInput: {title: $title, description: $desc, price: $price, date: $date}) {
               _id
               title
               description
@@ -68,7 +67,7 @@ class EventsPage extends Component {
         `,
       variables: {
         title: title,
-        description: description,
+        desc: description,
         price: price,
         date: date
       }
@@ -174,13 +173,14 @@ class EventsPage extends Component {
       this.setState({ selectedEvent: null });
       return;
     }
+    console.log(this.state.selectedEvent);
     const requestBody = {
       query: `
-          mutation BookEvent($id: ID!){
-            bookEvent(eventId: $eventId) {
+          mutation BookEvent($id: ID!) {
+            bookEvent(eventId: $id) {
               _id
-              createdAt
-              updatedAt
+             createdAt
+             updatedAt
             }
           }
         `,
@@ -209,7 +209,6 @@ class EventsPage extends Component {
       })
       .catch(err => {
         console.log(err);
-        this.setState({ isLoading: false });
       });
   };
 
@@ -265,13 +264,12 @@ class EventsPage extends Component {
           >
             <h1>{this.state.selectedEvent.title}</h1>
             <h2>
-              ${this.state.selectedEvent.price} -
+              ${this.state.selectedEvent.price} -{' '}
               {new Date(this.state.selectedEvent.date).toLocaleDateString()}
             </h2>
             <p>{this.state.selectedEvent.description}</p>
           </Modal>
         )}
-
         {this.context.token && (
           <div className='events-control'>
             <p>Share your own Events!</p>
