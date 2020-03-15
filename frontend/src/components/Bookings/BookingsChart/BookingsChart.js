@@ -1,4 +1,6 @@
 import React from 'react';
+import './BookingsChart.css';
+import { Bar as BarChart } from 'react-chartjs';
 
 const BOOKINGS_BUCKETS = {
   Cheap: { min: 0, max: 100 },
@@ -6,9 +8,10 @@ const BOOKINGS_BUCKETS = {
   Expensive: { min: 200, max: 100000 }
 };
 const bookingsChart = props => {
-  const output = [];
+  const chartData = { labels: [], datasets: [] };
+  let values = [];
   for (const bucket in BOOKINGS_BUCKETS) {
-    const filetrBookingsCount = props.bookings.reduce((prev, current) => {
+    const filteredBookingsCount = props.bookings.reduce((prev, current) => {
       if (
         current.event.price > BOOKINGS_BUCKETS[bucket].min &&
         current.event.price < BOOKINGS_BUCKETS[bucket].max
@@ -18,10 +21,21 @@ const bookingsChart = props => {
         return prev;
       }
     }, 0);
-    output[bucket] = filetrBookingsCount;
+    values.push(filteredBookingsCount);
+    chartData.labels.push(bucket);
+    chartData.datasets.push({
+      type: 'bar',
+      data: [values]
+    });
+    values = [...values];
+    values[values.length - 1] = 0;
   }
-  console.log(output);
-  return <p>The Chart</p>;
+
+  return (
+    <div className='chart-bar'>
+      <BarChart data={chartData} />
+    </div>
+  );
 };
 
 export default bookingsChart;

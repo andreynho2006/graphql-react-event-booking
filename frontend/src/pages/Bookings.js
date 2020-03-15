@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import BookingsList from '../components/Bookings/BookingList/BookingList';
+
 import Spinner from '../components/Spinner/Spinner';
 import AuthContext from '../context/auth-context';
+import BookingList from '../components/Bookings/BookingList/BookingList';
 import BookingsChart from '../components/Bookings/BookingsChart/BookingsChart';
 import BookingsControls from '../components/Bookings/BookingsControls/BookingsControls';
 
@@ -52,7 +53,6 @@ class BookingsPage extends Component {
         return res.json();
       })
       .then(resData => {
-        console.log(resData);
         const bookings = resData.data.bookings;
         this.setState({ bookings: bookings, isLoading: false });
       })
@@ -68,7 +68,7 @@ class BookingsPage extends Component {
       query: `
           mutation CancelBooking($id: ID!) {
             cancelBooking(bookingId: $id) {
-             _id
+            _id
              title
             }
           }
@@ -113,6 +113,7 @@ class BookingsPage extends Component {
       this.setState({ outputType: 'chart' });
     }
   };
+
   render() {
     let content = <Spinner />;
     if (!this.state.isLoading) {
@@ -124,7 +125,7 @@ class BookingsPage extends Component {
           />
           <div>
             {this.state.outputType === 'list' ? (
-              <BookingsList
+              <BookingList
                 bookings={this.state.bookings}
                 onDelete={this.deleteBookingHandler}
               />
